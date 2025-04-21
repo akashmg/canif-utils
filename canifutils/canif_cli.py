@@ -1,15 +1,15 @@
-from .canif import Canif
-from .caniflistener import CanifListener
-
 import argparse
-import threading
-import time
 import datetime
 import os
+import threading
+import time
 from pathlib import Path
 
 import can
 import cantools
+
+from .canif import Canif
+from .caniflistener import CanifListener
 
 
 def get_args():
@@ -41,7 +41,6 @@ def get_args():
     )
 
     return parser.parse_args()
-
 
 
 def send_test_messages(args, database, bus, test_stop_event):
@@ -102,7 +101,7 @@ def main():
                 estop_msg_sig_val=estop_msg_sig_val,
                 bus=bus,
                 database=database,
-                use_term=False
+                use_term=False,
             )
             can_listener = CanifListener(
                 sig_vals=sig_dict, database=database, rx_msg_stats=gui.rx_msg_stats

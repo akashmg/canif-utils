@@ -6,6 +6,7 @@ from tkinter import messagebox, ttk
 import can
 import cantools
 
+
 class CanifGui:
     def __init__(self):
         self.displayed_cfg = {}
@@ -153,7 +154,8 @@ class CanifGui:
 
     def send_can_message(self):
         raise NotImplementedError(
-            "Subclasses must implement the 'send_can_message' method.")
+            "Subclasses must implement the 'send_can_message' method."
+        )
 
     def _send_cfg_message(self, msg: cantools.database.can.Message, label=None) -> None:
         # reset dict for every new message

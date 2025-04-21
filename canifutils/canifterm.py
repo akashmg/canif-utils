@@ -5,6 +5,7 @@ from queue import SimpleQueue
 import can
 import cantools
 
+
 class CanifTerm:
     """
     Implements a terminal interface to send and receive CAN

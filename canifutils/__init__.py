@@ -4,4 +4,3 @@ from .canif import Canif
 from .caniflistener import CanifListener
 
 __all__ = ["Canif", "CanifListener"]
-

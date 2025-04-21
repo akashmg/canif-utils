@@ -1,6 +1,6 @@
 import json
-from pathlib import Path
 import threading
+from pathlib import Path
 
 import can
 import cantools
@@ -124,7 +124,6 @@ class Canif(CanifGui, CanifTerm):
             "Subclasses must implement the 'send_save_config_message' method."
         )
 
-
     def _write_config_file(self):
         cfg_vals = {}
         for msg in self.cfg_msg_list:
@@ -147,13 +146,14 @@ class Canif(CanifGui, CanifTerm):
     """
     Base class overrides
     """
+
     def launch(self):
         if self.use_term:
             CanifTerm.launch(self)
         else:
             CanifGui.launch(self)
 
-    def close (self):
+    def close(self):
         if self.use_term:
             CanifTerm.close(self)
         else:
