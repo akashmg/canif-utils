@@ -1,0 +1,18 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+cantools = "*"
+python-can = {extras = ["serial"], version = "*"}
+
+[dev-packages]
+pre-commit = "*"
+black = "*"
+pytest = "*"
+isort = "*"
+yamllint = "*"
+
+[requires]
+python_version = "3.13"

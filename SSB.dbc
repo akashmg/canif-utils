@@ -1,0 +1,89 @@
+VERSION ""
+
+
+NS_ : 
+	NS_DESC_
+	CM_
+	BA_DEF_
+	BA_
+	VAL_
+	CAT_DEF_
+	CAT_
+	FILTER
+	BA_DEF_DEF_
+	EV_DATA_
+	ENVVAR_DATA_
+	SGTYPE_
+	SGTYPE_VAL_
+	BA_DEF_SGTYPE_
+	BA_SGTYPE_
+	SIG_TYPE_REF_
+	VAL_TABLE_
+	SIG_GROUP_
+	SIG_VALTYPE_
+	SIGTYPE_VALTYPE_
+	BO_TX_BU_
+	BA_DEF_REL_
+	BA_REL_
+	BA_DEF_DEF_REL_
+	BU_SG_REL_
+	BU_EV_REL_
+	BU_BO_REL_
+	SG_MUL_VAL_
+
+BS_:
+
+BU_: PHW_CTLR PHW
+VAL_TABLE_ PHW_build_type 1 "BUILD_DBG" 0 "BUILD_REL" ;
+VAL_TABLE_ PHW_rx_mode 4 "OPEN LOOP" 3 "AVG CURRENT CONTROL" 2 "PEAK CURRENT CONTROL" 1 "STANDBY" 0 "IDLE" ;
+VAL_TABLE_ PHW_mode 5 "FAULT" 4 "OPEN LOOP" 3 "AVG CURRENT CONTROL" 2 "PEAK CURRENT CONTROL" 1 "STANDBY" 0 "IDLE" ;
+
+
+BO_ 1026 PHW_Control_Status: 6 PHW
+ SG_ PHW_min_pcc_duty : 32|16@1+ (0.001, 0) [0|65.535] "" PHW_CTLR
+ SG_ PHW_max_pcc_duty : 16|16@1+ (0.001, 0) [0|65.535] "" PHW_CTLR
+ SG_ PHW_Iref : 0|16@1- (0.01,0) [-100|100] "A"  PHW_CTLR
+
+BO_ 1536 PHW_Version: 8 PHW
+ SG_ PHW_build_type : 56|8@1+ (1,0) [0|0] ""  PHW_CTLR
+ SG_ PHW_githash : 0|56@1+ (1,0) [0|0] "ascii"  PHW_CTLR
+
+BO_ 1025 PHW_PWM_Status: 8 PHW
+ SG_ PHW_rising_dt_ns : 40|8@1+ (10,0) [0|2550] "ns"  PHW_CTLR
+ SG_ PHW_falling_dt_ns : 32|8@1+ (10,0) [0|2550] "ns"  PHW_CTLR
+ SG_ PHW_duty : 16|16@1+ (0.001,0) [0|65.535] ""  PHW_CTLR
+ SG_ PHW_freq_Hz : 0|16@1+ (1,0) [0|65535] "Hz"  PHW_CTLR
+
+BO_ 1024 PHW_Status: 8 PHW
+ SG_ PHW_Vpv : 24|16@1+ (0.1,0) [0|6553.5] "V"  PHW_CTLR
+ SG_ PHW_Vbat : 8|16@1+ (0.01,0) [0|655.35] "V"  PHW_CTLR
+ SG_ PHW_mode : 0|8@1+ (1,0) [0|0] ""  PHW_CTLR
+ SG_ PHW_Ipv_avg : 56|8@1- (0.1,0) [-12.8|12.7] "A"  PHW_CTLR
+ SG_ PHW_Ibatt_avg : 40|16@1- (0.01,0) [-327.68|327.67] "A"  PHW_CTLR
+
+BO_ 1792 PHW_rx_Debug_Command_1: 8 PHW_CTLR
+ SG_ PHW_rx_Iref : 48|16@1- (0.01,0) [-100|100] "A"  PHW
+ SG_ PHW_rx_freq_Hz : 32|16@1+ (1,0) [0|65535] "Hz"  PHW
+ SG_ PHW_rx_max_pcc_duty : 16|16@1+ (0.001, 0) [0|65.535] "" PHW
+ SG_ PHW_rx_duty : 0|16@1+ (0.001,0) [0|65.535] ""  PHW
+
+BO_ 1793 PHW_rx_Debug_Command_2: 6 PHW_CTLR
+ SG_ PHW_rx_min_pcc_duty : 32|16@1+ (0.001, 0) [0|65.535] "" PHW
+ SG_ PHW_rx_falling_dt_ns : 24|8@1+ (10,0) [0|2550] "ns"  PHW
+ SG_ PHW_rx_rising_dt_ns : 16|8@1+ (10,0) [0|2550] "ns"  PHW
+ SG_ PHW_rx_run_time_ms : 0|16@1+ (1,0) [0|65535] "ms"  PHW
+
+BO_ 256 PHW_rx_Command: 2 PHW_CTLR
+ SG_ PHW_rx_mcu_reset : 8|8@1+ (1,0) [0|1] "" PHW
+ SG_ PHW_rx_mode : 0|8@1+ (1,0) [0|0] ""  PHW
+
+
+
+BA_DEF_  "MultiplexExtEnabled" ENUM  "No","Yes";
+BA_DEF_  "BusType" STRING ;
+BA_DEF_DEF_  "MultiplexExtEnabled" "No";
+BA_DEF_DEF_  "BusType" "CAN";
+VAL_ 1536 PHW_build_type 1 "BUILD_DBG" 0 "BUILD_REL" ;
+VAL_ 1024 PHW_mode 5 "FAULT" 4 "OPEN LOOP" 3 "AVG CURRENT CONTROL" 2 "PEAK CURRENT CONTROL" 1 "STANDBY" 0 "IDLE" ;
+VAL_ 256 PHW_rx_mode 4 "OPEN LOOP" 3 "AVG CURRENT CONTROL" 2 "PEAK CURRENT CONTROL" 1 "STANDBY" 0 "IDLE" ;
+
