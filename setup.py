@@ -12,7 +12,8 @@ setup(
     python_requires=">=3.7",
     entry_points={
         "console_scripts": [
-            "canifutils=canifutils.canif_cli:main",
+            "canifutilstest=canifutils.canif_cli:main",
+            "canlogdecode=canifutils.canif_csvdecoder:main",
         ],
     },
     license="MIT",

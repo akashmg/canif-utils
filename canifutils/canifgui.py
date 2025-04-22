@@ -123,6 +123,7 @@ class CanifGui:
                 entry, var = self.displayed_cfg[db_msg.name][sig_name]
                 display_value = signal.choices.get(sig_value)
                 var.set(display_value)
+                self.sig_vals[db_msg.name][signal.name] = sig_value
             else:
                 sig_dict[signal.name] = self.sig_vals[db_msg.name][signal.name]
         self.send_can_message(db_msg, sig_dict)
