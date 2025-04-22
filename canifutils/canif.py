@@ -10,16 +10,30 @@ from .canifterm import CanifTerm
 
 
 class Canif(CanifGui, CanifTerm):
-
     """
-    Creates the GUI elements to send and receive CAN messages. This class
-    provides methods for initializing the GUI, updating displayed values,
+    Main interface class for CAN communication with GUI and terminal support.
+
+    This class provides methods for initializing the GUI, updating displayed values,
     sending CAN messages, and saving/loading default transmit signal values.
     It is designed to work with a CAN bus, a CAN database, and a configuration file.
+
+    Inherits from:
+        CanifGui: For GUI-based CAN interaction.
+        CanifTerm: For terminal-based CAN interaction.
     """
 
     @classmethod
     def get_sig_dict_from_config(cls, fcfg_path: str = None):
+        """
+        Load the signal dictionary from a configuration file.
+
+        Args:
+            fcfg_path (str, optional): Path to the configuration file. If None, uses default path.
+
+        Returns:
+            dict: Dictionary containing signal values loaded from the configuration file,
+                  or an empty dictionary if the file is not found or cannot be read.
+        """
         sig_dict = {}
         if fcfg_path is None:
             fcfg_path = Path("data") / f"cangui_config_params.csv"
@@ -38,6 +52,13 @@ class Canif(CanifGui, CanifTerm):
 
     @classmethod
     def init_sig_dict(cls, sig_dict: dict, db: cantools.database.can.Database) -> None:
+        """
+        Initialize the signal dictionary with values from the CAN database.
+
+        Args:
+            sig_dict (dict): The signal dictionary to initialize.
+            db (cantools.database.can.Database): The CAN database object.
+        """
         for message in db.messages:
             if message.name in sig_dict:
                 cfg_sigs = sig_dict[message.name]
@@ -63,6 +84,19 @@ class Canif(CanifGui, CanifTerm):
         use_term: bool = False,
         event: threading.Event = None,
     ):
+        """
+        Initialize the Canif interface.
+
+        Args:
+            sig_vals (dict): Dictionary of signal values by message name.
+            vitals_msgs (list): List of message names considered as vitals.
+            rx_ids (set, optional): Set of CAN IDs to receive.
+            estop_msg_sig_val (tuple, optional): Emergency stop message, signal name, and value.
+            bus (can.BusABC, optional): CAN bus interface.
+            database (cantools.database.can.Database, optional): CAN database object.
+            use_term (bool, optional): Use terminal interface if True, otherwise use GUI.
+            event (threading.Event, optional): Event object for synchronization.
+        """
         self.sig_vals: dict[str, dict[str, int]] = sig_vals
         self.vitals_msgs: list[str] = vitals_msgs
         self.rx_ids: set[int] = rx_ids
@@ -99,8 +133,14 @@ class Canif(CanifGui, CanifTerm):
 
     def send_can_message(self, msg: cantools.database.can.Message, sig_dict: dict):
         """
-        This method should be overridden by derived classes
-        to provide specific functionality.
+        Send a CAN message with the specified signal values.
+
+        Args:
+            msg (cantools.database.can.Message): The CAN message definition.
+            sig_dict (dict): Dictionary of signal values for the message.
+
+        Raises:
+            NotImplementedError: If no CAN bus is available.
         """
         if self.bus:
             try:
@@ -117,14 +157,23 @@ class Canif(CanifGui, CanifTerm):
 
     def send_save_config_message(self):
         """
-        This method should be overridden by derived classes
-        to provide specific functionality.
+        Send a message to save the current configuration.
+
+        This method should be overridden by derived classes to provide specific functionality.
+
+        Raises:
+            NotImplementedError: Always, unless overridden in a subclass.
         """
         raise NotImplementedError(
             "Subclasses must implement the 'send_save_config_message' method."
         )
 
     def _write_config_file(self):
+        """
+        Write the current configuration signal values to the configuration file.
+
+        The configuration is stored as a JSON file in the 'data' directory.
+        """
         cfg_vals = {}
         for msg in self.cfg_msg_list:
             # reset for every new message
@@ -148,12 +197,22 @@ class Canif(CanifGui, CanifTerm):
     """
 
     def launch(self):
+        """
+        Launch the CAN interface, either in terminal or GUI mode.
+
+        Calls the appropriate launch method based on the interface type.
+        """
         if self.use_term:
             CanifTerm.launch(self)
         else:
             CanifGui.launch(self)
 
     def close(self):
+        """
+        Close the CAN interface, either in terminal or GUI mode.
+
+        Calls the appropriate close method based on the interface type.
+        """
         if self.use_term:
             CanifTerm.close(self)
         else:
