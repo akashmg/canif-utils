@@ -11,7 +11,6 @@
 ## Not supported
 - Multiplexed messages (not tested)
 - Bus error handling and reconnection
--
 
 ## Installation
 
