@@ -21,7 +21,7 @@ pip install canifutils
 ## Usage
 
 Example usage can be found in the canif_cli file.
-
+https://github.com/akashmg/canif-utils/blob/main/canifutils/canif_cli.py
 
 ## Test
 
