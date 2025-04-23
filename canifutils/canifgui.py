@@ -23,17 +23,17 @@ class CanifGui:
     def _update_response_section(self, message):
         signals = self.sig_vals.get(message, {})
         for signal_name, signal_value in signals.items():
+            timestamp = self.rx_msg_stats[message]["last_received"]
             iid = f"{message}_{signal_name}"
 
             # Check if the item exists before trying to update it
             if self.responses_tree.exists(iid):
                 current_value = self.responses_tree.item(iid, "values")[1]
-                if current_value != signal_value:
-                    self.responses_tree.item(iid, values=(signal_name, signal_value))
+                self.responses_tree.item(iid, values=(signal_name, signal_value, timestamp))
             else:
                 # If the signal doesn't exist in the treeview, add it
                 self.responses_tree.insert(
-                    "", "end", iid=iid, text=message, values=(signal_name, signal_value)
+                    "", "end", iid=iid, text=message, values=(signal_name, signal_value, timestamp)
                 )
 
     def _on_message_select(self, event):
@@ -57,27 +57,28 @@ class CanifGui:
         self.clock_label.after(1000, self._update_clock)
 
     def _update_meas_gui(self):
-        # Update the vitals section without flickering
-        for msg, signals in self.vitals.items():
-            timestamp = self.rx_msg_stats[msg]["last_received"]
-            for signal_name, signal_value in signals.items():
-                iid = f"{msg}_{signal_name}"
+        if self.vitals_msgs:
+            # Update the vitals section without flickering
+            for msg, signals in self.vitals.items():
+                timestamp = self.rx_msg_stats[msg]["last_received"]
+                for signal_name, signal_value in signals.items():
+                    iid = f"{msg}_{signal_name}"
 
-                # If the signal is already displayed, update its value
-                if iid in self.displayed_signals:
-                    self.vitals_tree.item(
-                        iid, values=(signal_name, signal_value, timestamp)
-                    )
-                    self.displayed_signals[iid] = signal_value
-                else:
-                    # Insert a new signal if it doesn't exist
-                    self.vitals_tree.insert(
-                        "",
-                        "end",
-                        iid=iid,
-                        values=(signal_name, signal_value, timestamp),
-                    )
-                    self.displayed_signals[iid] = signal_value
+                    # If the signal is already displayed, update its value
+                    if iid in self.displayed_signals:
+                        self.vitals_tree.item(
+                            iid, values=(signal_name, signal_value, timestamp)
+                        )
+                        self.displayed_signals[iid] = signal_value
+                    else:
+                        # Insert a new signal if it doesn't exist
+                        self.vitals_tree.insert(
+                            "",
+                            "end",
+                            iid=iid,
+                            values=(signal_name, signal_value, timestamp),
+                        )
+                        self.displayed_signals[iid] = signal_value
 
         # Update the response section with available messages in the dropdown
         self.responses_combobox["values"] = list(self.rx_msg_stats.keys())
@@ -306,20 +307,21 @@ class CanifGui:
         root.title("Measurements")
 
         # Section 1: Vitals
-        vitals_frame = tk.Frame(root)
-        vitals_frame.pack(padx=10, pady=10, fill="both", expand=True)
+        if self.vitals_msgs:
+            vitals_frame = tk.Frame(root)
+            vitals_frame.pack(padx=10, pady=10, fill="both", expand=True)
 
-        vitals_label = tk.Label(vitals_frame, text="Vitals", font=("Helvetica", 16))
-        vitals_label.pack()
+            vitals_label = tk.Label(vitals_frame, text="Vitals", font=("Helvetica", 16))
+            vitals_label.pack()
 
-        vitals_tree = ttk.Treeview(
-            vitals_frame, columns=("Signal", "Value", "Last Received"), show="headings"
-        )
-        vitals_tree.heading("Signal", text="Signal")
-        vitals_tree.heading("Value", text="Value")
-        vitals_tree.heading("Last Received", text="Last Received")
-        vitals_tree.pack(fill="both", expand=True)
-        self.vitals_tree = vitals_tree
+            vitals_tree = ttk.Treeview(
+                vitals_frame, columns=("Signal", "Value", "Last Received"), show="headings"
+            )
+            vitals_tree.heading("Signal", text="Signal")
+            vitals_tree.heading("Value", text="Value")
+            vitals_tree.heading("Last Received", text="Last Received")
+            vitals_tree.pack(fill="both", expand=True)
+            self.vitals_tree = vitals_tree
 
         # Section 2: Responses
         responses_frame = tk.Frame(root)
@@ -336,10 +338,11 @@ class CanifGui:
         self.responses_combobox = responses_combobox
 
         responses_tree = ttk.Treeview(
-            responses_frame, columns=("Signal", "Value"), show="headings"
+            responses_frame, columns=("Signal", "Value", "Last Received"), show="headings"
         )
         responses_tree.heading("Signal", text="Signal")
         responses_tree.heading("Value", text="Value")
+        responses_tree.heading("Last Received", text="Last Received")
         responses_tree.pack(fill="both", expand=True)
         self.responses_tree = responses_tree
 

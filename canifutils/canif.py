@@ -77,10 +77,12 @@ class Canif(CanifGui, CanifTerm):
         self,
         sig_vals: dict[str, dict[str, int]],
         vitals_msgs: list[str],
+        database: cantools.database.can.Database,
         rx_ids: set[int] = None,
+        tx_ids: set[int] = None,
+        node: str = None,
         estop_msg_sig_val: tuple[cantools.database.can.Message, str, int] = None,
         bus: can.BusABC = None,
-        database: cantools.database.can.Database = None,
         use_term: bool = False,
         event: threading.Event = None,
     ):
@@ -90,23 +92,32 @@ class Canif(CanifGui, CanifTerm):
         Args:
             sig_vals (dict): Dictionary of signal values by message name.
             vitals_msgs (list): List of message names considered as vitals.
+            database (cantools.database.can.Database): CAN database object.
             rx_ids (set, optional): Set of CAN IDs to receive.
+            tx_ids (set, optional): Set of CAN IDs to send.
+            node (str, optional): Name of node which is the receiver and transmitter
             estop_msg_sig_val (tuple, optional): Emergency stop message, signal name, and value.
             bus (can.BusABC, optional): CAN bus interface.
-            database (cantools.database.can.Database, optional): CAN database object.
             use_term (bool, optional): Use terminal interface if True, otherwise use GUI.
             event (threading.Event, optional): Event object for synchronization.
         """
+        if node == None and (rx_ids == None or tx_ids == None):
+            raise ValueError("Must provide rx & tx ids or node")
         self.sig_vals: dict[str, dict[str, int]] = sig_vals
         self.vitals_msgs: list[str] = vitals_msgs
+        self.db: cantools.database.can.Database = database
         self.rx_ids: set[int] = rx_ids
+        self.tx_ids: set[int] = tx_ids
+        self.node: str = node
+        if self.node:
+            self.tx_ids = [msg.frame_id for msg in self.db.messages if self.node in msg.senders]
+            self.rx_ids = [msg.frame_id for msg in self.db.messages if self.node in msg.receivers]
         self.estop_msg_sig_val: tuple[
             cantools.database.can.Message, str, int
         ] = estop_msg_sig_val
         self.bus: can.BusABC = bus
-        self.db: cantools.database.can.Database = database
-        self.cfg_msg_list: list[cantools.database.can.Message] = [
-            msg for msg in self.db.messages if msg.frame_id not in self.rx_ids
+        self.cfg_msg_list = [
+            msg for msg in self.db.messages if msg.frame_id in self.tx_ids
         ]
         # db messages are sorted from high MID to low
         # we want this list to be low to high
@@ -122,8 +133,9 @@ class Canif(CanifGui, CanifTerm):
                     "prev_ts": 0,
                 }
         self.vitals: dict = {}
-        for msg in vitals_msgs:
-            self.vitals[msg] = self.sig_vals[msg]
+        if vitals_msgs:
+            for msg in vitals_msgs:
+                self.vitals[msg] = self.sig_vals[msg]
         self.use_term: bool = use_term
 
         if self.use_term:
@@ -148,7 +160,7 @@ class Canif(CanifGui, CanifTerm):
                 can_msg = can.Message(arbitration_id=msg.frame_id, data=can_data)
                 self.bus.send(can_msg)
             except can.CanError as e:
-                print(repr(e))
+                print(f'send_can_message: {repr(e)}')
 
         else:
             raise NotImplementedError(
