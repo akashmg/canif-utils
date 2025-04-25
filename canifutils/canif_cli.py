@@ -17,6 +17,14 @@ def get_args():
     log_path = Path("logs") / f"{timestamp}-cangui.csv"
 
     parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "-c",
+        "--canbusif",
+        help="CAN bus interface '-c pcan PCAN_USBBUS1'",
+        nargs=2,
+        required=False,
+        default=["virtual", "vcan0"],
+    )
     parser.add_argument("-d", "--dbc_file", help="CAN DBC file", required=True)
     parser.add_argument(
         "-l",
@@ -27,7 +35,7 @@ def get_args():
         default=None,
         help='Set for logging. Optional to add a file path arg.\n\
         Default path is "./logs/%Y-%m-%d_%H-%M-%S-cangui.log',
-        required=False
+        required=False,
     )
     parser.add_argument(
         "-v",
@@ -35,11 +43,23 @@ def get_args():
         nargs="+",
         help="List of message names to display in the vitals section.\
             Example: -v MSG1 MSG2 MSG3",
-        required=False
+        required=False,
     )
     parser.add_argument("-n", "--node", help="Node to emulate", required=False)
     parser.add_argument(
-        "-e", "--estop", nargs=3, help="msg sig val to disable", default=None, required=False
+        "-e",
+        "--estop",
+        nargs=3,
+        help="'-e msg sig val' (Send disable)",
+        default=None,
+        required=False,
+    )
+    parser.add_argument(
+        "-t",
+        "--test",
+        help="Send test messages to node for display",
+        required=False,
+        action="store_true",
     )
 
     return parser.parse_args()
@@ -88,14 +108,16 @@ def main():
             int(args.estop[2]),
         )
     else:
-        estop_msg_sig_val=None
+        estop_msg_sig_val = None
 
     can_notifier = None
     test_stop_event = None
     test_thread = None
     try:
         with can.Bus(
-            interface="virtual", channel="vcan0", receive_own_messages=True
+            interface=args.canbusif[0],
+            channel=args.canbusif[1],
+            receive_own_messages=True,
         ) as bus:
             gui = Canif(
                 sig_vals=sig_dict,
@@ -117,11 +139,13 @@ def main():
             can_notifier = can.Notifier(bus, listeners)
 
             # test framework
-            test_stop_event = threading.Event()
-            test_thread = threading.Thread(
-                target=send_test_messages, args=(args, database, bus, test_stop_event)
-            )
-            test_thread.start()
+            if args.test:
+                test_stop_event = threading.Event()
+                test_thread = threading.Thread(
+                    target=send_test_messages,
+                    args=(args, database, bus, test_stop_event),
+                )
+                test_thread.start()
 
             # blocking call while the gui is running
             gui.launch()
@@ -135,10 +159,11 @@ def main():
     finally:
         if can_notifier:
             can_notifier.stop()
-        if test_stop_event:
-            test_stop_event.set()
-        if test_thread:
-            test_thread.join()
+        if args.test:
+            if test_stop_event:
+                test_stop_event.set()
+            if test_thread:
+                test_thread.join()
 
 
 if __name__ == "__main__":

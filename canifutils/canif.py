@@ -110,8 +110,12 @@ class Canif(CanifGui, CanifTerm):
         self.tx_ids: set[int] = tx_ids
         self.node: str = node
         if self.node:
-            self.tx_ids = [msg.frame_id for msg in self.db.messages if self.node in msg.senders]
-            self.rx_ids = [msg.frame_id for msg in self.db.messages if self.node in msg.receivers]
+            self.tx_ids = [
+                msg.frame_id for msg in self.db.messages if self.node in msg.senders
+            ]
+            self.rx_ids = [
+                msg.frame_id for msg in self.db.messages if self.node in msg.receivers
+            ]
         self.estop_msg_sig_val: tuple[
             cantools.database.can.Message, str, int
         ] = estop_msg_sig_val
@@ -160,7 +164,7 @@ class Canif(CanifGui, CanifTerm):
                 can_msg = can.Message(arbitration_id=msg.frame_id, data=can_data)
                 self.bus.send(can_msg)
             except can.CanError as e:
-                print(f'send_can_message: {repr(e)}')
+                print(f"send_can_message: {repr(e)}")
 
         else:
             raise NotImplementedError(

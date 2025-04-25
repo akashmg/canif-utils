@@ -29,11 +29,17 @@ class CanifGui:
             # Check if the item exists before trying to update it
             if self.responses_tree.exists(iid):
                 current_value = self.responses_tree.item(iid, "values")[1]
-                self.responses_tree.item(iid, values=(signal_name, signal_value, timestamp))
+                self.responses_tree.item(
+                    iid, values=(signal_name, signal_value, timestamp)
+                )
             else:
                 # If the signal doesn't exist in the treeview, add it
                 self.responses_tree.insert(
-                    "", "end", iid=iid, text=message, values=(signal_name, signal_value, timestamp)
+                    "",
+                    "end",
+                    iid=iid,
+                    text=message,
+                    values=(signal_name, signal_value, timestamp),
                 )
 
     def _on_message_select(self, event):
@@ -315,7 +321,9 @@ class CanifGui:
             vitals_label.pack()
 
             vitals_tree = ttk.Treeview(
-                vitals_frame, columns=("Signal", "Value", "Last Received"), show="headings"
+                vitals_frame,
+                columns=("Signal", "Value", "Last Received"),
+                show="headings",
             )
             vitals_tree.heading("Signal", text="Signal")
             vitals_tree.heading("Value", text="Value")
@@ -338,7 +346,9 @@ class CanifGui:
         self.responses_combobox = responses_combobox
 
         responses_tree = ttk.Treeview(
-            responses_frame, columns=("Signal", "Value", "Last Received"), show="headings"
+            responses_frame,
+            columns=("Signal", "Value", "Last Received"),
+            show="headings",
         )
         responses_tree.heading("Signal", text="Signal")
         responses_tree.heading("Value", text="Value")
