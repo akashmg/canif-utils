@@ -12,7 +12,7 @@ setup(
     python_requires=">=3.7",
     entry_points={
         "console_scripts": [
-            "canifutilstest=canifutils.canif_cli:main",
+            "canif=canifutils.canif_cli:main",
             "canlogdecode=canifutils.canif_csvdecoder:main",
         ],
     },

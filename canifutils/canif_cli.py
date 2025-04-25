@@ -151,8 +151,9 @@ def main():
             gui.launch()
 
             can_notifier.stop()
-            test_stop_event.set()
-            test_thread.join()
+            if args.test:
+                test_stop_event.set()
+                test_thread.join()
 
     except Exception as e:
         print(repr(e))

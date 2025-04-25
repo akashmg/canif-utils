@@ -40,8 +40,8 @@ VAL_TABLE_ PHW_mode 5 "FAULT" 4 "OPEN LOOP" 3 "AVG CURRENT CONTROL" 2 "PEAK CURR
 
 
 BO_ 1026 PHW_Control_Status: 6 PHW
- SG_ PHW_min_pcc_duty : 32|16@1+ (0.001, 0) [0|65.535] "" PHW_CTLR
- SG_ PHW_max_pcc_duty : 16|16@1+ (0.001, 0) [0|65.535] "" PHW_CTLR
+ SG_ PHW_min_pcc_duty : 32|16@1+ (0.001, 0) [0|1.000] "" PHW_CTLR
+ SG_ PHW_max_pcc_duty : 16|16@1+ (0.001, 0) [0|1.000] "" PHW_CTLR
  SG_ PHW_Iref : 0|16@1- (0.01,0) [-100|100] "A"  PHW_CTLR
 
 BO_ 1536 PHW_Version: 8 PHW
@@ -51,7 +51,7 @@ BO_ 1536 PHW_Version: 8 PHW
 BO_ 1025 PHW_PWM_Status: 8 PHW
  SG_ PHW_rising_dt_ns : 40|8@1+ (10,0) [0|2550] "ns"  PHW_CTLR
  SG_ PHW_falling_dt_ns : 32|8@1+ (10,0) [0|2550] "ns"  PHW_CTLR
- SG_ PHW_duty : 16|16@1+ (0.001,0) [0|65.535] ""  PHW_CTLR
+ SG_ PHW_duty : 16|16@1+ (0.001,0) [0|1.000] ""  PHW_CTLR
  SG_ PHW_freq_Hz : 0|16@1+ (1,0) [0|65535] "Hz"  PHW_CTLR
 
 BO_ 1024 PHW_Status: 8 PHW
@@ -64,11 +64,11 @@ BO_ 1024 PHW_Status: 8 PHW
 BO_ 1792 PHW_rx_Debug_Command_1: 8 PHW_CTLR
  SG_ PHW_rx_Iref : 48|16@1- (0.01,0) [-100|100] "A"  PHW
  SG_ PHW_rx_freq_Hz : 32|16@1+ (1,0) [0|65535] "Hz"  PHW
- SG_ PHW_rx_max_pcc_duty : 16|16@1+ (0.001, 0) [0|65.535] "" PHW
- SG_ PHW_rx_duty : 0|16@1+ (0.001,0) [0|65.535] ""  PHW
+ SG_ PHW_rx_max_pcc_duty : 16|16@1+ (0.001, 0) [0|1.000] "" PHW
+ SG_ PHW_rx_duty : 0|16@1+ (0.001,0) [0|1.000] ""  PHW
 
 BO_ 1793 PHW_rx_Debug_Command_2: 6 PHW_CTLR
- SG_ PHW_rx_min_pcc_duty : 32|16@1+ (0.001, 0) [0|65.535] "" PHW
+ SG_ PHW_rx_min_pcc_duty : 32|16@1+ (0.001, 0) [0|1.000] "" PHW
  SG_ PHW_rx_falling_dt_ns : 24|8@1+ (10,0) [0|2550] "ns"  PHW
  SG_ PHW_rx_rising_dt_ns : 16|8@1+ (10,0) [0|2550] "ns"  PHW
  SG_ PHW_rx_run_time_ms : 0|16@1+ (1,0) [0|65535] "ms"  PHW
